@@ -67,7 +67,25 @@ npm run dev
 
 It will start at `http://localhost:3000` — open that in your browser.
 
-## 3. How to use
+## 3. Deployment
+
+Deploy the `backend` folder as a Render web service:
+
+- Build command: `npm install`
+- Start command: `npm start`
+- Add `DATABASE_URL`, `NODE_ENV=production`, and Neon `PORT` settings in Render.
+
+Deploy the `frontend` folder as a Vercel project:
+
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Add `VITE_API_URL=https://bus-booking-app-g2zw.onrender.com` in Vercel Environment Variables.
+
+After changing a Vercel environment variable, redeploy the frontend. The frontend
+uses the Render API for all sheets and bookings.
+
+## 4. How to use
 
 1. Click **"+ नई शीट"**, fill the top info (date, service name, vehicle number,
    helper, route, driver name) → **"जानकारी सेव करें"**.

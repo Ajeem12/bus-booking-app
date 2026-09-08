@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000/api";
+const API_URL = (
+  import.meta.env.VITE_API_URL || "https://bus-booking-app-g2zw.onrender.com"
+).replace(/\/$/, "");
+const API_BASE = `${API_URL}/api`;
 
 export const api = {
   getSheets: () => axios.get(`${API_BASE}/trip-sheets`).then((r) => r.data),
