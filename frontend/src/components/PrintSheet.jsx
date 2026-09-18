@@ -8,6 +8,8 @@ export default function PrintSheet({
   bookings,
   fontSize,
   setFontSize,
+  emptyRows,
+  setEmptyRows,
   onClose,
 }) {
   return (
@@ -22,6 +24,16 @@ export default function PrintSheet({
             max="26"
             value={fontSize}
             onChange={(e) => setFontSize(Number(e.target.value))}
+          />
+        </label>
+        <label className="font-slider">
+          खाली पंक्तियाँ: {emptyRows}
+          <input
+            type="range"
+            min="0"
+            max="10"
+            value={emptyRows}
+            onChange={(e) => setEmptyRows(Number(e.target.value))}
           />
         </label>
         <button onClick={() => window.print()}>
@@ -85,7 +97,7 @@ export default function PrintSheet({
                     </tr>
                   ))}
                   {(sec === "sleeper" || sec === "seat") &&
-                    Array.from({ length: 5 }).map((_, index) => (
+                    Array.from({ length: emptyRows }).map((_, index) => (
                       <tr
                         className="empty-booking-row"
                         key={`${sec}-empty-${index}`}

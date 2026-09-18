@@ -22,6 +22,7 @@ export default function App() {
   const [bookingSuggestions, setBookingSuggestions] = useState([]);
   const [showPrint, setShowPrint] = useState(false);
   const [fontSize, setFontSize] = useState(15);
+  const [emptyRows, setEmptyRows] = useState(2);
   const [page, setPage] = useState("dashboard");
 
   useEffect(() => {
@@ -107,6 +108,8 @@ export default function App() {
         bookings={bookings}
         fontSize={fontSize}
         setFontSize={setFontSize}
+        emptyRows={emptyRows}
+        setEmptyRows={setEmptyRows}
         onClose={() => setShowPrint(false)}
       />
     );
