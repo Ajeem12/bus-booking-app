@@ -1,7 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { formatSeatNumber, sectionQuantity } from "../bookingUtils";
 
 const sections = ["sleeper", "seat", "cabin"];
+
+function getLocationCode(route = "") {
+  const normalizedRoute = route.toLowerCase();
+
+  if (
+    normalizedRoute.includes("बिलासपुर") ||
+    normalizedRoute.includes("bilaspur")
+  ) {
+    return "BSP";
+  }
+  if (
+    normalizedRoute.includes("भाठापारा") ||
+    normalizedRoute.includes("भाटापारा") ||
+    normalizedRoute.includes("bhathapara") ||
+    normalizedRoute.includes("bhatapara")
+  ) {
+    return "BYT";
+  }
+  if (
+    normalizedRoute.includes("नाँदघाट") ||
+    normalizedRoute.includes("नांदघाट") ||
+    normalizedRoute.includes("नंदघाट") ||
+    normalizedRoute.includes("नन्दघाट") ||
+    normalizedRoute.includes("nandghat")
+  ) {
+    return "NANDGHAT";
+  }
+
+  return "CG";
+}
+
+function getPdfFileName(header) {
+  const date = String(header.trip_date || "date")
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, "-");
+  const vehicleNumber = String(header.vehicle_number || "vehicle")
+    .trim()
+    .replace(/[\\/:*?"<>|]/g, "-");
+
+  return `CG TO PUNE ${getLocationCode(header.route)} ${date}-${vehicleNumber}`;
+}
 
 export default function PrintSheet({
   header,
@@ -12,6 +53,15 @@ export default function PrintSheet({
   setEmptyRows,
   onClose,
 }) {
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = getPdfFileName(header);
+
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [header]);
+
   return (
     <div className="print-wrapper">
       <div className="no-print controls">
