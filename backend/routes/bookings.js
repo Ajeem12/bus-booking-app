@@ -58,6 +58,34 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Save the displayed order of rows within a section.
+router.put("/reorder", async (req, res) => {
+  const { trip_sheet_id, booking_ids } = req.body;
+  if (!trip_sheet_id || !Array.isArray(booking_ids)) {
+    return res
+      .status(400)
+      .json({ error: "trip_sheet_id and booking_ids are required" });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    for (const [sortOrder, bookingId] of booking_ids.entries()) {
+      await client.query(
+        "UPDATE bookings SET sort_order = $1 WHERE id = $2 AND trip_sheet_id = $3",
+        [sortOrder, bookingId, trip_sheet_id],
+      );
+    }
+    await client.query("COMMIT");
+    res.json({ success: true });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 // Update a booking row
 router.put("/:id", async (req, res) => {
   try {

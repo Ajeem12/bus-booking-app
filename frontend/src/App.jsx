@@ -24,6 +24,7 @@ export default function App() {
   const [fontSize, setFontSize] = useState(15);
   const [emptyRows, setEmptyRows] = useState(2);
   const [page, setPage] = useState("dashboard");
+  const [copiedBooking, setCopiedBooking] = useState(null);
 
   useEffect(() => {
     loadSheets();
@@ -92,6 +93,25 @@ export default function App() {
   async function handleUpdateBooking(id, data) {
     await api.updateBooking(id, data);
     await loadSheet(activeSheetId);
+  }
+
+  async function handleReorderBookings(orderedBookings) {
+    await Promise.all(
+      orderedBookings.map((booking, sort_order) =>
+        api.updateBooking(booking.id, { ...booking, sort_order }),
+      ),
+    );
+    await loadSheet(activeSheetId);
+  }
+
+  async function handlePasteBooking() {
+    if (!activeSheetId || !copiedBooking) return;
+    await handleAddBooking({
+      ...copiedBooking,
+      trip_sheet_id: activeSheetId,
+      sort_order: bookings.filter((b) => b.section === copiedBooking.section)
+        .length,
+    });
   }
 
   function handleNewSheet() {
@@ -235,7 +255,26 @@ export default function App() {
                 bookings={bookings}
                 onDelete={handleDeleteBooking}
                 onUpdate={handleUpdateBooking}
+                onReorder={handleReorderBookings}
+                onCopy={setCopiedBooking}
               />
+              {copiedBooking && (
+                <div className="paste-bar">
+                  <span>
+                    कॉपी की गई एंट्री:{" "}
+                    {copiedBooking.passenger_name || "नाम नहीं"}
+                  </span>
+                  <button onClick={handlePasteBooking}>
+                    इस शीट में पेस्ट करें
+                  </button>
+                  <button
+                    className="muted-button"
+                    onClick={() => setCopiedBooking(null)}
+                  >
+                    रद्द
+                  </button>
+                </div>
+              )}
               <button className="print-btn" onClick={() => setShowPrint(true)}>
                 प्रिंट / PDF देखें →
               </button>
