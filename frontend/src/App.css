@@ -210,6 +210,15 @@ h3 {
 .autocomplete-field input {
   width: 100%;
 }
+.input-count {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #718087;
+  font-size: 12px;
+  pointer-events: none;
+}
 .autocomplete-menu {
   position: absolute;
   z-index: 20;

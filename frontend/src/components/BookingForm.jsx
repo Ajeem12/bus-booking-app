@@ -13,7 +13,13 @@ const emptyRow = {
   marked: false,
 };
 
-function AutocompleteInput({ value, onChange, suggestions, ...props }) {
+function AutocompleteInput({
+  value,
+  onChange,
+  suggestions,
+  showCount,
+  ...props
+}) {
   const [focused, setFocused] = useState(false);
   const query = String(value || "").toLocaleLowerCase();
   const matches = suggestions.filter((suggestion) =>
@@ -29,6 +35,9 @@ function AutocompleteInput({ value, onChange, suggestions, ...props }) {
         onFocus={() => setFocused(true)}
         onBlur={() => setTimeout(() => setFocused(false), 150)}
       />
+      {showCount && (
+        <span className="input-count">अंक: {String(value || "").length}</span>
+      )}
       {focused && query && matches.length > 0 && (
         <div className="autocomplete-menu">
           {matches.slice(0, 8).map((suggestion) => (
@@ -66,6 +75,7 @@ export default function BookingForm({ onAdd, bookings = [] }) {
   const submit = (e) => {
     e.preventDefault();
     if (!row.agent_name && !row.passenger_name) return;
+    if (row.mobile_number && !/^\d{10}$/.test(row.mobile_number)) return;
     onAdd({
       ...row,
       seat_number: formatSeatNumber(row.seat_number, row.section),
@@ -106,6 +116,10 @@ export default function BookingForm({ onAdd, bookings = [] }) {
           value={row.mobile_number}
           onChange={update("mobile_number")}
           suggestions={valuesFor("mobile_number")}
+          inputMode="numeric"
+          maxLength={10}
+          pattern="[0-9]{10}"
+          showCount
         />
         <AutocompleteInput
           placeholder="जमा"
