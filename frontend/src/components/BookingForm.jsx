@@ -137,6 +137,7 @@ export default function BookingForm({ onAdd, bookings = [] }) {
           <option value="sleeper">स्लीपर सेक्शन</option>
           <option value="seat">सीट सेक्शन</option>
           <option value="cabin">केबिन सेक्शन</option>
+          <option value="gali">गली सेक्शन</option>
         </select>
       </div>
       <button type="submit">+ जोड़ें</button>

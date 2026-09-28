@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { formatSeatNumber, sectionQuantity } from "../bookingUtils";
 
-const sections = ["sleeper", "seat", "cabin"];
+const sections = ["sleeper", "seat", "cabin", "gali"];
 
 function getLocationCode(route = "") {
   const normalizedRoute = route.toLowerCase();

@@ -13,7 +13,12 @@ export function sectionQuantity(rows) {
   return rows.reduce((total, row) => total + seatQuantity(row.seat_number), 0);
 }
 
-const sectionLabels = { sleeper: "स्लीपर", seat: "सीट", cabin: "केबिन" };
+const sectionLabels = {
+  sleeper: "स्लीपर",
+  seat: "सीट",
+  cabin: "केबिन",
+  gali: "गली",
+};
 
 export function formatSeatNumber(seatNumber, section) {
   const match = String(seatNumber || "").match(/[0-9]+|[०-९]+/);

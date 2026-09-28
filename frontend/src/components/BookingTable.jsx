@@ -14,8 +14,13 @@ const fields = [
   "deposit",
   "balance",
 ];
-const sections = ["sleeper", "seat", "cabin"];
-const sectionLabels = { sleeper: "स्लीपर", seat: "सीट", cabin: "केबिन" };
+const sections = ["sleeper", "seat", "cabin", "gali"];
+const sectionLabels = {
+  sleeper: "स्लीपर",
+  seat: "सीट",
+  cabin: "केबिन",
+  gali: "गली",
+};
 
 export default function BookingTable({
   bookings,
