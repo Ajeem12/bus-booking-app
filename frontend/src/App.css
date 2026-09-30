@@ -393,6 +393,123 @@ select:focus {
   padding: 20px;
 }
 
+.api-loading {
+  position: fixed;
+  z-index: 1000;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: min(330px, calc(100vw - 32px));
+  padding: 15px 18px;
+  overflow: hidden;
+  color: #fffdf9;
+  background: #173b46;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  box-shadow: 0 16px 42px rgba(23, 59, 70, 0.28);
+  animation: loading-enter 180ms ease-out both;
+}
+.loading-spinner {
+  position: relative;
+  flex: 0 0 25px;
+  width: 25px;
+  height: 25px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-top-color: #f0a171;
+  border-right-color: #f0a171;
+  border-radius: 50%;
+  animation: loading-spin 700ms linear infinite;
+}
+.loading-spinner::after {
+  position: absolute;
+  inset: 6px;
+  content: "";
+  background: #f0a171;
+  border-radius: 50%;
+}
+.loading-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.loading-copy strong {
+  color: #fffdf9;
+  font-size: 13px;
+  font-weight: 700;
+}
+.loading-copy span {
+  color: #c5d5d6;
+  font-size: 11px;
+}
+.loading-count {
+  margin-left: auto;
+  padding: 5px 8px;
+  color: #173b46;
+  background: #f0a171;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.loading-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+.loading-progress::after {
+  display: block;
+  width: 38%;
+  height: 100%;
+  content: "";
+  background: #f0a171;
+  animation: loading-progress 1.2s ease-in-out infinite;
+}
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading-progress {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(370%);
+  }
+}
+@keyframes loading-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 700px) {
+  .api-loading {
+    right: 16px;
+    bottom: 16px;
+    min-width: 0;
+    width: calc(100vw - 32px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .api-loading,
+  .loading-spinner,
+  .loading-progress::after {
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+  }
+}
+
 h1 {
   text-align: center;
   color: #1f2937;

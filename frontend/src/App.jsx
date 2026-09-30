@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { api } from "./api";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
+import { api, getApiActivity, subscribeApiActivity } from "./api";
 import TripHeaderForm from "./components/TripHeaderForm";
 import BookingForm from "./components/BookingForm";
 import BookingTable from "./components/BookingTable";
@@ -14,7 +14,30 @@ const emptyHeader = {
   driver_name: "",
 };
 
+function ApiLoadingIndicator({ activity }) {
+  if (!activity.count) return null;
+
+  return (
+    <div className="api-loading" role="status" aria-live="polite">
+      <span className="loading-spinner" aria-hidden="true" />
+      <span className="loading-copy">
+        <strong>{activity.label}</strong>
+        <span>कृपया प्रतीक्षा करें</span>
+      </span>
+      {activity.count > 1 && (
+        <span className="loading-count">{activity.count} सक्रिय</span>
+      )}
+      <span className="loading-progress" aria-hidden="true" />
+    </div>
+  );
+}
+
 export default function App() {
+  const apiActivity = useSyncExternalStore(
+    subscribeApiActivity,
+    getApiActivity,
+    getApiActivity,
+  );
   const [sheets, setSheets] = useState([]);
   const [activeSheetId, setActiveSheetId] = useState(null);
   const [header, setHeader] = useState(emptyHeader);
@@ -123,15 +146,18 @@ export default function App() {
 
   if (showPrint) {
     return (
-      <PrintSheet
-        header={header}
-        bookings={bookings}
-        fontSize={fontSize}
-        setFontSize={setFontSize}
-        emptyRows={emptyRows}
-        setEmptyRows={setEmptyRows}
-        onClose={() => setShowPrint(false)}
-      />
+      <>
+        <PrintSheet
+          header={header}
+          bookings={bookings}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          emptyRows={emptyRows}
+          setEmptyRows={setEmptyRows}
+          onClose={() => setShowPrint(false)}
+        />
+        <ApiLoadingIndicator activity={apiActivity} />
+      </>
     );
   }
 
@@ -282,6 +308,7 @@ export default function App() {
           )}
         </>
       )}
+      <ApiLoadingIndicator activity={apiActivity} />
     </div>
   );
 }
