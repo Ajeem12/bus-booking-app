@@ -349,6 +349,11 @@ select:focus {
   min-height: 32px;
   border-radius: 4px;
 }
+.edit-table select {
+  min-height: 32px;
+  padding: 6px;
+  border-radius: 4px;
+}
 .mark-checkbox {
   width: 18px !important;
   height: 18px;

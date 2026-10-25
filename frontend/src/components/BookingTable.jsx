@@ -8,6 +8,7 @@ import {
 const fields = [
   "agent_name",
   "seat_number",
+  "section",
   "passenger_name",
   "boarding_point",
   "mobile_number",
@@ -28,6 +29,9 @@ export default function BookingTable({
   onUpdate,
   onReorder,
   onCopy,
+  selectedBookingIds,
+  onToggleBooking,
+  onToggleAllBookings,
 }) {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
@@ -89,8 +93,21 @@ export default function BookingTable({
             <table className="edit-table">
               <thead>
                 <tr>
+                  <th>
+                    <input
+                      className="mark-checkbox"
+                      type="checkbox"
+                      checked={
+                        bookings.length > 0 &&
+                        selectedBookingIds.length === bookings.length
+                      }
+                      onChange={onToggleAllBookings}
+                      aria-label="सभी एंट्री चुनें"
+                    />
+                  </th>
                   <th>एजेंट नाम</th>
                   <th>सीट संख्या</th>
+                  <th>सेक्शन</th>
                   <th>नाम /गाँव</th>
                   <th>बैठने का स्थान</th>
                   <th>मो. नंबर</th>
@@ -110,19 +127,43 @@ export default function BookingTable({
                     onDrop={() => moveRow(b.id)}
                     className={draggedId === b.id ? "dragging-row" : ""}
                   >
+                    <td>
+                      <input
+                        className="mark-checkbox"
+                        type="checkbox"
+                        checked={selectedBookingIds.includes(b.id)}
+                        onChange={() => onToggleBooking(b.id)}
+                        aria-label={`${b.passenger_name || "एंट्री"} चुनें`}
+                      />
+                    </td>
                     {fields.map((f) => (
                       <td key={f}>
                         {editingId === b.id ? (
-                          <input
-                            value={
-                              f === "seat_number"
-                                ? seatNumberInputValue(draft[f])
-                                : draft[f] || ""
-                            }
-                            onChange={(e) => updateDraft(f, e.target.value)}
-                          />
+                          f === "section" ? (
+                            <select
+                              value={draft[f] || "sleeper"}
+                              onChange={(e) => updateDraft(f, e.target.value)}
+                            >
+                              {sections.map((section) => (
+                                <option key={section} value={section}>
+                                  {sectionLabels[section]}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              value={
+                                f === "seat_number"
+                                  ? seatNumberInputValue(draft[f])
+                                  : draft[f] || ""
+                              }
+                              onChange={(e) => updateDraft(f, e.target.value)}
+                            />
+                          )
                         ) : f === "seat_number" ? (
                           formatSeatNumber(b[f], b.section)
+                        ) : f === "section" ? (
+                          sectionLabels[b[f]] || b[f]
                         ) : (
                           b[f]
                         )}

@@ -70,6 +70,10 @@ export const api = {
     request("बुकिंग क्रम अपडेट हो रहा है", () =>
       axios.put(`${API_BASE}/bookings/reorder`, data),
     ),
+  moveBookings: (data) =>
+    request("बुकिंग दूसरी शीट में भेजी जा रही हैं", () =>
+      axios.put(`${API_BASE}/bookings/move`, data),
+    ),
   getBookingSuggestions: () =>
     request("बुकिंग सुझाव लोड हो रहे हैं", () =>
       axios.get(`${API_BASE}/bookings/suggestions`),

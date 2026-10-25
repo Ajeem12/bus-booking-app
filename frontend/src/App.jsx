@@ -48,6 +48,7 @@ export default function App() {
   const [emptyRows, setEmptyRows] = useState(2);
   const [page, setPage] = useState("dashboard");
   const [copiedBooking, setCopiedBooking] = useState(null);
+  const [selectedBookingIds, setSelectedBookingIds] = useState([]);
 
   useEffect(() => {
     loadSheets();
@@ -84,6 +85,7 @@ export default function App() {
       driver_name: data.driver_name || "",
     });
     setBookings(data.bookings || []);
+    setSelectedBookingIds([]);
   }
 
   async function handleCreateOrUpdateHeader() {
@@ -118,6 +120,31 @@ export default function App() {
     await loadSheet(activeSheetId);
   }
 
+  function handleToggleBooking(id) {
+    setSelectedBookingIds((current) =>
+      current.includes(id)
+        ? current.filter((bookingId) => bookingId !== id)
+        : [...current, id],
+    );
+  }
+
+  function handleToggleAllBookings() {
+    setSelectedBookingIds((current) =>
+      current.length === bookings.length
+        ? []
+        : bookings.map((booking) => booking.id),
+    );
+  }
+
+  async function handleMoveBookings(targetSheetId) {
+    if (!targetSheetId || selectedBookingIds.length === 0) return;
+    await api.moveBookings({
+      booking_ids: selectedBookingIds,
+      trip_sheet_id: targetSheetId,
+    });
+    await loadSheet(activeSheetId);
+  }
+
   async function handleReorderBookings(orderedBookings) {
     await Promise.all(
       orderedBookings.map((booking, sort_order) =>
@@ -141,6 +168,7 @@ export default function App() {
     setActiveSheetId(null);
     setHeader(emptyHeader);
     setBookings([]);
+    setSelectedBookingIds([]);
     setPage("editor");
   }
 
@@ -283,7 +311,37 @@ export default function App() {
                 onUpdate={handleUpdateBooking}
                 onReorder={handleReorderBookings}
                 onCopy={setCopiedBooking}
+                selectedBookingIds={selectedBookingIds}
+                onToggleBooking={handleToggleBooking}
+                onToggleAllBookings={handleToggleAllBookings}
               />
+              {selectedBookingIds.length > 0 && (
+                <div className="paste-bar">
+                  <span>{selectedBookingIds.length} एंट्री चुनी गईं</span>
+                  <select
+                    defaultValue=""
+                    onChange={(e) => handleMoveBookings(e.target.value)}
+                  >
+                    <option value="">दूसरी शीट में भेजें...</option>
+                    {sheets
+                      .filter(
+                        (sheet) => String(sheet.id) !== String(activeSheetId),
+                      )
+                      .map((sheet) => (
+                        <option key={sheet.id} value={sheet.id}>
+                          {sheet.trip_date || "तारीख नहीं"} -{" "}
+                          {sheet.vehicle_number || "गाड़ी नहीं"}
+                        </option>
+                      ))}
+                  </select>
+                  <button
+                    className="muted-button"
+                    onClick={() => setSelectedBookingIds([])}
+                  >
+                    चयन हटाएं
+                  </button>
+                </div>
+              )}
               {copiedBooking && (
                 <div className="paste-bar">
                   <span>

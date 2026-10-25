@@ -86,6 +86,59 @@ router.put("/reorder", async (req, res) => {
   }
 });
 
+// Move one or more bookings to another trip sheet.
+router.put("/move", async (req, res) => {
+  const { booking_ids, trip_sheet_id } = req.body;
+  if (
+    !trip_sheet_id ||
+    !Array.isArray(booking_ids) ||
+    booking_ids.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "booking_ids and trip_sheet_id are required" });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const targetSheet = await client.query(
+      "SELECT id FROM trip_sheets WHERE id = $1",
+      [trip_sheet_id],
+    );
+    if (targetSheet.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "Target trip sheet not found" });
+    }
+
+    for (const bookingId of booking_ids) {
+      const bookingResult = await client.query(
+        "SELECT section FROM bookings WHERE id = $1",
+        [bookingId],
+      );
+      const booking = bookingResult.rows[0];
+      if (!booking) continue;
+
+      const nextOrderResult = await client.query(
+        "SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order FROM bookings WHERE trip_sheet_id = $1 AND section = $2",
+        [trip_sheet_id, booking.section],
+      );
+      await client.query(
+        "UPDATE bookings SET trip_sheet_id = $1, sort_order = $2 WHERE id = $3",
+        [trip_sheet_id, nextOrderResult.rows[0].next_order, bookingId],
+      );
+    }
+
+    await client.query("COMMIT");
+    res.json({ success: true });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 // Update a booking row
 router.put("/:id", async (req, res) => {
   try {
