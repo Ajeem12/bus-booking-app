@@ -120,9 +120,9 @@ export default function PrintSheet({
             <tr>
               <th>एजेंट नाम</th>
               <th>सीट संख्या</th>
-              <th>नाम /गाँव</th>
-              <th>बैठने का स्थान</th>
-              <th>मो. नंबर</th>
+              <th>यात्री का नाम</th>
+              <th>कहां से कहां तक</th>
+              <th>मोबाईल नंबर</th>
               <th>जमा</th>
               <th>बाकि</th>
               <th></th>
