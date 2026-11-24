@@ -103,8 +103,9 @@ uses the Render API for all sheets and bookings.
 
 ## Notes
 
-- To reopen an old sheet later, use the "पुरानी शीट खोलें" dropdown at the top —
-  everything is saved in Neon PostgreSQL, so it's there next time you open the app.
+- Trips are ordered with upcoming dates first on the home page and in the booking
+  editor; past trips remain available below them. Everything is saved in Neon
+  PostgreSQL, so it's there next time you open the app.
 - If you want to change the section labels (स्लीपर/सीट/केबिन) or add more sections,
   edit the `sections` array in `frontend/src/components/BookingForm.jsx`,
   `BookingTable.jsx`, and `PrintSheet.jsx`.

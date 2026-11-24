@@ -4,6 +4,7 @@ import TripHeaderForm from "./components/TripHeaderForm";
 import BookingForm from "./components/BookingForm";
 import BookingTable from "./components/BookingTable";
 import PrintSheet from "./components/PrintSheet";
+import { sortTripsUpcomingFirst } from "./bookingUtils";
 
 const emptyHeader = {
   trip_date: "",
@@ -49,6 +50,7 @@ export default function App() {
   const [page, setPage] = useState("dashboard");
   const [copiedBooking, setCopiedBooking] = useState(null);
   const [selectedBookingIds, setSelectedBookingIds] = useState([]);
+  const sortedSheets = sortTripsUpcomingFirst(sheets);
 
   useEffect(() => {
     loadSheets();
@@ -244,12 +246,12 @@ export default function App() {
           <div className="section-heading">
             <div>
               <p className="eyebrow">SAVED TRIPS</p>
-              <h2>पुरानी शीट</h2>
+              <h2>यात्रा शीट</h2>
             </div>
             <span className="count-pill">{sheets.length} शीट</span>
           </div>
           <div className="sheet-grid">
-            {sheets.map((sheet) => (
+            {sortedSheets.map((sheet) => (
               <button
                 className="sheet-tile"
                 key={sheet.id}
@@ -285,7 +287,7 @@ export default function App() {
                 onChange={(e) => openSheet(e.target.value)}
               >
                 <option value="">-- शीट चुनें --</option>
-                {sheets.map((s) => (
+                {sortedSheets.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.trip_date} - {s.vehicle_number}
                   </option>

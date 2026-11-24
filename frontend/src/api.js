@@ -5,6 +5,11 @@ const API_URL = (
 ).replace(/\/$/, "");
 const API_BASE = `${API_URL}/api`;
 
+// const API_URL = (
+//   import.meta.env.VITE_API_URL || "https://bus-booking-app-axn1.vercel.app/"
+// ).replace(/\/$/, "");
+// const API_BASE = `${API_URL}/api`;
+
 const activeRequests = new Map();
 let nextRequestId = 0;
 let activity = { count: 0, label: "" };
